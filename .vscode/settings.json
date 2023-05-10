@@ -1,0 +1,8 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "saveremote.URL": "http://34.105.36.188:8765/",
+    "saveremote.localPrefix": "c:\\Users\\yuzho\\source\\repos\\ChownNET\\",
+    "saveremote.remotePrefix": "/home/yuzhongh/ChownNET/",
+    "saveremote.Auth": "nOgjXyCG68tq2E8",
+
+}
