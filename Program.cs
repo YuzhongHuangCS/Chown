@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
 
 public class Program {
     public static string FOLDER_MIME = "application/vnd.google-apps.folder";
@@ -23,7 +23,7 @@ public class Program {
         string fileId = args[0];
         var queryRequest = DRIVE_SRC.Files.Get(fileId);
         queryRequest.Fields = "mimeType";
-        var queryFie = queryRequest.Execute();
+        var queryFie = await queryRequest.ExecuteAsync();
         if (queryFie.MimeType == FOLDER_MIME) {
             Console.WriteLine("Listing Directory: " + fileId);
             var fileList = DRIVE_SRC.Files.List();
@@ -31,7 +31,7 @@ public class Program {
             var fileIds = new List<string>();
 
             do {
-                var listResults = fileList.Execute();
+                var listResults = await fileList.ExecuteAsync();
                 fileIds.AddRange(listResults.Files.Select(f => f.Id));
                 fileList.PageToken = listResults.NextPageToken;
             } while (fileList.PageToken != null) ;
