@@ -60,12 +60,12 @@ public class Program {
 
     private static void Chown(string fileId) {
         var req = DRIVE_SRC.Files.Get(fileId);
-        req.Fields = "id,name,mimeType,parents,owners,ownedByMe";
+        req.Fields = "id,name,mimeType,parents,owners,ownedByMe,size";
 
         var srcFile = req.Execute();
         if (srcFile.OwnedByMe == true) {
             if (srcFile.MimeType != FOLDER_MIME) {
-                using (var stream = new MemoryStream()) {
+                using (var stream = new MemoryStream((int)srcFile.Size)) {
                     req.Download(stream);
                     stream.Position = 0;
 
