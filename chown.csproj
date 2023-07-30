@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.60.0.3034" />
+    <PackageReference Include="MimeMapping" Version="2.0.0" />
   </ItemGroup>
 
 </Project>
