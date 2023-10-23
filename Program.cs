@@ -25,20 +25,7 @@ public class Program {
         queryRequest.Fields = "mimeType";
         var queryFie = await queryRequest.ExecuteAsync();
         if (queryFie.MimeType == FOLDER_MIME) {
-            Console.WriteLine("Listing Directory: " + fileId);
-            var fileList = DRIVE_SRC.Files.List();
-            fileList.Q = $"'{fileId}' in parents";
-            var fileIds = new List<string>();
-
-            do {
-                var listResults = await fileList.ExecuteAsync();
-                fileIds.AddRange(listResults.Files.Select(f => f.Id));
-                fileList.PageToken = listResults.NextPageToken;
-            } while (fileList.PageToken != null) ;
-
-            Console.WriteLine("Total number of files: " + fileIds.Count);
-            var options = new ParallelOptions() { MaxDegreeOfParallelism = 4 };
-            Parallel.ForEach(fileIds, options, Chown);
+            await ChownFolder(fileId);
         } else {
             Chown(fileId);
         }
@@ -83,9 +70,27 @@ public class Program {
                 }
             } else {
                 Console.WriteLine(fileId + " is a folder");
+                Task.Run(() => ChownFolder(fileId)).Wait();
             }
         } else {
             Console.WriteLine(fileId + " is not owned by me");
         }
+    }
+
+    private async static Task ChownFolder(string fileId) {
+        Console.WriteLine("Listing Directory: " + fileId);
+        var fileList = DRIVE_SRC.Files.List();
+        fileList.Q = $"'{fileId}' in parents";
+        var fileIds = new List<string>();
+
+        do {
+            var listResults = await fileList.ExecuteAsync();
+            fileIds.AddRange(listResults.Files.Select(f => f.Id));
+            fileList.PageToken = listResults.NextPageToken;
+        } while (fileList.PageToken != null) ;
+
+        Console.WriteLine("Total number of files: " + fileIds.Count);
+        var options = new ParallelOptions() { MaxDegreeOfParallelism = 4 };
+        Parallel.ForEach(fileIds, options, Chown);
     }
 }
